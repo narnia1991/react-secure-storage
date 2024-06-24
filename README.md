@@ -1,47 +1,44 @@
 [![npm](https://img.shields.io/npm/v/react-secure-storage.svg)](https://www.npmjs.com/package/react-secure-storage) [![downloads](https://img.shields.io/npm/dm/react-secure-storage.svg)](http://npm-stat.com/charts.html?package=react-secure-storage)
 
-## The problem statement!
+## The Problem Statement
 
-Most of the people save data into local storage, Is this a safe method to store ? No! Local storage writes the data as a plan string and any one who has the access to the device can read this data and manipulate. 
+Most people save data in local storage. Is this a safe method to store data? No! Local storage writes the data as a plain string, and anyone who has access to the device can read and manipulate this data.
 
-Most of the people thinks that we can encrypt the data and save it on local storage, But in this case, you need to have a secure key to decrypt this data, 
+Many people think that encrypting the data and saving it in local storage is secure. However, in this case, you need a secure key to decrypt the data.
 
-Let's consider this **Scenario**, You have encrypted the user login information and saved on local storage, When the platform reload, You are decrypting the data which is written on local storage and marking the user as logged or logged out, Here your website share a common secure key to encrypt and decrypt,  which means only your website knows how to decrypt, 
+Let's consider this **scenario**: You have encrypted the user's login information and saved it in local storage. When the platform reloads, you decrypt the data from local storage and mark the user as logged in or out. Here, your website shares a common secure key to encrypt and decrypt, which means only your website knows how to decrypt.
 
-In this case, if someone copies the data from local storage and past on a different browser, then load your website, Your website will authenticate the user, Why ? because your website knows how to decrypt the data!
+In this case, if someone copies the data from local storage and pastes it into a different browser, then loads your website, your website will authenticate the user. Why? Because your website knows how to decrypt the data!
 
-This is the problem when you have a single secure key! **Then how do we solve this issue ?**
+This is the problem when you have a single secure key. **So how do we solve this issue?**
 
+## Why React Secure Storage?
 
+React Secure Storage was created to securely write data to local storage (**it's a wrapper written on top of default localStorage to securely write data to localStorage**). This secure storage library generates a secure key for every browser and encrypts the data using this key, which means only the browser that encrypted the data can decrypt it.
 
-## Why React Secure Storage ?
-
-React secure storage is created to securely write the data to local storage ( **Basically its a wrapper written on top of default localStorage to write the data securely to the localStorage** ), here secure storage library generate a secure key for every browser and encrypt the data using this key, which means only the browser which encrypted the data can decrypt it, 
-
-Additionally react secure storage preserve the data format for every data type, As out of the box it supports the following data types 
+Additionally, React Secure Storage preserves the data format for every data type. Out of the box, it supports the following data types:
 
 **String | Object | Number | Boolean**
 
-Which means you don't need to explicitly convert every data to string
+This means you don't need to explicitly convert every data type to a string.
 
+## How Does It Work?
 
+React Secure Storage is written in the Singleton design pattern. When the library is initialized, it reads all the data from local storage, decrypts all the data written using react-secure-storage, and keeps it in memory. This ensures faster reading of all the data.
 
-## How does it work ?
+The key is generated using a browser fingerprint, which is created using 10+ browser key identifiers and a user-specific secure key.
 
-React secure storage is written in Singleton design pattern, and when the library initialized it reads all the data from local storage and decrypt all the data which is written using react-secure-storage and keeps on the memory, This ensure faster reading of all the data,
+The user-specific secure key can be configured using a .env file as follows:
 
-The key is generated using browser fingerprint, which is generated using 10+ browser key identifiers and user input secure key,
+```
+SECURE_LOCAL_STORAGE_HASH_KEY=xxxxxxxxx
+```
 
-The user specific Secure key can be configured using  .env file as
+The secure local storage prefix can be configured using a .env file as follows:
 
-    SECURE_LOCAL_STORAGE_HASH_KEY=xxxxxxxxx
-
-
-Secure local storage prefix can be configured using .env file as
-
-	SECURE_LOCAL_STORAGE_PREFIX=xxxxxxx
-
-
+```
+SECURE_LOCAL_STORAGE_PREFIX=xxxxxxx
+```
 
 ### Here are the .env prefix lists for the supported languages that are built-in.
 
@@ -49,143 +46,140 @@ Secure local storage prefix can be configured using .env file as
 |----------|--------------|
 | React    | REACT_APP_   |
 | Vite     | VITE_        |
-| Next.Js  | NEXT_PUBLIC_ |
+| Next.js  | NEXT_PUBLIC_ |
 
-You can always use the environment variables without the prefix as well
+You can always use the environment variables without the prefix as well.
 
+## How to Use
 
-## How to use
+To use the library, first, you need to install it using:
 
-To use the library first you need to install using 
-
-    yarn add react-secure-storage
+```
+yarn add react-secure-storage
+```
 
 or
 
-    npm install react-secure-storage
+```
+npm install react-secure-storage
+```
 
-You can use the following methods to read and write items to secure local storage
+You can use the following methods to read and write items to secure local storage:
 
-|         Function       |Usecase                          | Datatype                         |
-|----------------|-------------------------------|-----------------------------|
-|`setItem(key, value)` |To set values to secure storage            |Supports `'String - Object - Number - Boolean'` as value            |
-|`getItem(key)`        |To get values which is saved on secure local storage           | Return null if the key does not exits           |
-|`removeItem(key)`          | To remove specified key from secure local storage|  |
-|`clear()`          | Removed all data from secure local storage|  |
+| Function              | Use Case                                          | Data Type                       |
+|-----------------------|---------------------------------------------------|---------------------------------|
+| `setItem(key, value)` | To set values in secure storage                   | Supports `String - Object - Number - Boolean` as value |
+| `getItem(key)`        | To get values saved in secure local storage       | Returns null if the key does not exist |
+| `removeItem(key)`     | To remove a specified key from secure local storage |                                 |
+| `clear()`             | Removes all data from secure local storage        |                                 |
 
-## How to use with Vite
+## How to Use with Vite
 
-In the latest version of Vite, process is not defined by default, It uses `import.meta.env`, 
+In the latest version of Vite, process is not defined by default; it uses `import.meta.env`.
 
-To define the process, You need to add the following code inside `vite.config.ts`
+To define the process, you need to add the following code inside `vite.config.ts`:
 
-	import { defineConfig } from 'vite'
-	// ...
-	export default defineConfig({
-	  // ...
-	  define: {
-	    "process.env": {},
-	  },
-	}) 
+```js
+import { defineConfig } from 'vite'
+// ...
+export default defineConfig({
+  // ...
+  define: {
+    "process.env": {},
+  },
+})
+```
 
-Here you can pass all the required `ENV` variables supported by the library inside the process.env object
+Here you can pass all the required `ENV` variables supported by the library inside the process.env object.
 
-## To disable properties from key generation
+## To Disable Properties from Key Generation
 
-If you wish to disable any of the key generation property, You can do it as below
+If you wish to disable any of the key generation properties, you can do so as follows:
 
-	SECURE_LOCAL_STORAGE_DISABLED_KEYS=ScreenPrint|Plugins
+```
+SECURE_LOCAL_STORAGE_DISABLED_KEYS=ScreenPrint|Plugins
+```
+
 or
 
-	REACT_APP_SECURE_LOCAL_STORAGE_DISABLED_KEYS=ScreenPrint|Plugins
+```
+REACT_APP_SECURE_LOCAL_STORAGE_DISABLED_KEYS=ScreenPrint|Plugins
+```
 
-Here is the list of all the supported values `UserAgent|ScreenPrint|Plugins|Fonts|LocalStorage|SessionStorage|TimeZone|Language|SystemLanguage|Cookie|Canvas|Hostname`
+Here is the list of all the supported values: `UserAgent|ScreenPrint|Plugins|Fonts|LocalStorage|SessionStorage|TimeZone|Language|SystemLanguage|Cookie|Canvas|Hostname`
 
->Here we strongly recommend you to not to disable any of the properties as more properties you have, more unique the browser fingerprint will be!
+> We strongly recommend not disabling any of the properties, as more properties you have, the more unique the browser fingerprint will be!
 
-
-
-### How to use environment variables for the supported languages.
+### How to Use Environment Variables for the Supported Languages
 
 | Language | Key                                            | Usage                                                                            |
 |----------|------------------------------------------------|----------------------------------------------------------------------------------|
-| Default  | SECURE_LOCAL_STORAGE_HASH_KEY                  | Used to specify the user specific hash key                                        |
+| Default  | SECURE_LOCAL_STORAGE_HASH_KEY                  | Used to specify the user-specific hash key                                        |
 | Default  | SECURE_LOCAL_STORAGE_PREFIX                    | Used to change the local storage prefix where the data will be finally saved     |
-| Default  | SECURE_LOCAL_STORAGE_DISABLED_KEYS             | Used to disable individual property from encryption / fingerprint key generation |
-| React    | REACT_APP_SECURE_LOCAL_STORAGE_HASH_KEY        | Used to specify the user specific hash key                                        |
+| Default  | SECURE_LOCAL_STORAGE_DISABLED_KEYS             | Used to disable individual properties from encryption/fingerprint key generation |
+| React    | REACT_APP_SECURE_LOCAL_STORAGE_HASH_KEY        | Used to specify the user-specific hash key                                        |
 | React    | REACT_APP_SECURE_LOCAL_STORAGE_PREFIX          | Used to change the local storage prefix where the data will be finally saved     |
-| React    | REACT_APP_SECURE_LOCAL_STORAGE_DISABLED_KEYS   | Used to disable individual property from encryption / fingerprint key generation |
-| Vite     | VITE_SECURE_LOCAL_STORAGE_HASH_KEY             | Used to specify the user specific hash key                                        |
+| React    | REACT_APP_SECURE_LOCAL_STORAGE_DISABLED_KEYS   | Used to disable individual properties from encryption/fingerprint key generation |
+| Vite     | VITE_SECURE_LOCAL_STORAGE_HASH_KEY             | Used to specify the user-specific hash key                                        |
 | Vite     | VITE_SECURE_LOCAL_STORAGE_PREFIX               | Used to change the local storage prefix where the data will be finally saved     |
-| Vite     | VITE_SECURE_LOCAL_STORAGE_DISABLED_KEYS        | Used to disable individual property from encryption / fingerprint key generation |
-| Next.Js  | NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY      | Used to specify the user specific hash key                                        |
-| Next.Js  | NEXT_PUBLIC_SECURE_LOCAL_STORAGE_PREFIX        | Used to change the local storage prefix where the data will be finally saved     |
-| Next.Js  | NEXT_PUBLIC_SECURE_LOCAL_STORAGE_DISABLED_KEYS | Used to disable individual property from encryption / fingerprint key generation |
+| Vite     | VITE_SECURE_LOCAL_STORAGE_DISABLED_KEYS        | Used to disable individual properties from encryption/fingerprint key generation |
+| Next.js  | NEXT_PUBLIC_SECURE_LOCAL_STORAGE_HASH_KEY      | Used to specify the user-specific hash key                                        |
+| Next.js  | NEXT_PUBLIC_SECURE_LOCAL_STORAGE_PREFIX        | Used to change the local storage prefix where the data will be finally saved     |
+| Next.js  | NEXT_PUBLIC_SECURE_LOCAL_STORAGE_DISABLED_KEYS | Used to disable individual properties from encryption/fingerprint key generation |
 
 ## Sample Code
 
-    
-    import { useEffect } from  "react";
-    import  secureLocalStorage  from  "react-secure-storage";
-    
-      
-    const App = () => {
-	    useEffect(() => {
-		    secureLocalStorage.setItem("object", {
-			    message:  "This is testing of local storage",
-		    });
-		    secureLocalStorage.setItem("number", 12);
-		    secureLocalStorage.setItem("string", "12");
-		    secureLocalStorage.setItem("boolean", true);
-		    let value = secureLocalStorage.getItem("boolean");
-		}, []);
-    
-	   return (
-		    <div>
-			    This is a sample code
-		    </div>
-		);
-    }
-    
-    export  default  App;
+```js
+import { useEffect } from "react";
+import secureLocalStorage from "react-secure-storage";
 
+const App = () => {
+  useEffect(() => {
+    secureLocalStorage.setItem("object", {
+      message: "This is testing of local storage",
+    });
+    secureLocalStorage.setItem("number", 12);
+    secureLocalStorage.setItem("string", "12");
+    secureLocalStorage.setItem("boolean", true);
+    let value = secureLocalStorage.getItem("boolean");
+  }, []);
 
-## Build Size ! 7.6KB
+  return (
+    <div>
+      This is a sample code
+    </div>
+  );
+}
 
-## Whats new in 1.3.2?
+export default App;
+```
 
-Regular bug fixes and https://github.com/sushinpv/react-secure-storage/issues/39 is resolved
+## Build Size: 7.6KB
 
-## Whats new | Previous?
+## What's New in 1.3.2?
 
-Added support for Vite and Next.js environment variables 
+Regular bug fixes and resolution of issue [#39](https://github.com/sushinpv/react-secure-storage/issues/39).
 
-Now you can disable individual fingerprint generation properties, This is discussed in the following enhancement https://github.com/sushinpv/react-secure-storage/issues/14
+## What's New | Previous?
 
-Secure token returning null when the browser resizes problem was fixed. This was previously included as a security feature, but in the most recent update, it was removed. This was covered in the ensuing issue: https://github.com/sushinpv/react-secure-storage/issues/9
+- Added support for Vite and Next.js environment variables.
+- Now you can disable individual fingerprint generation properties, discussed in enhancement [#14](https://github.com/sushinpv/react-secure-storage/issues/14).
+- Fixed secure token returning null when the browser resizes. This was previously included as a security feature but was removed in the latest update, covered in issue [#9](https://github.com/sushinpv/react-secure-storage/issues/9).
+- Included the browser hostname in the secure key to make it more unique, ensuring each website's key is distinct.
+- Added support for updating the local storage prefix, configurable using .env.
+- Resolved issue [#2](https://github.com/sushinpv/react-secure-storage/issues/2).
+- Added support for `Cypress`.
+- Added proper type definitions for the entire package.
+- Added support for older ES versions and Next.js.
+- Released the first version of React Secure Local Storage, supporting `setItem`, `getItem`, `removeItem`, and `clear` functions.
 
-Now that we have included the browser hostname while establishing the secure key, it is more unique. This will guarantee that each website's key is distinct.
+## How Do I Test This Library on My Local System & How Do I Contribute?
 
-Added support for updating Local Storage prefix, Now this can be updated using .env
+For local testing, make sure you install `react-scripts` using `npm i react-scripts` or `yarn add react-scripts`. The react-scripts were removed due to a vulnerability issue highlighted [here](https://github.com/sushinpv/react-secure-storage/issues/3).
 
-Resolved https://github.com/sushinpv/react-secure-storage/issues/2
+To contribute to the library, create a development branch for your fix as `dev/{feature/fix}` and create a PR to the master branch.
 
-Added support for `Cypress`
-
-Added proper type definition for the entire package
-
-Added support for older es versions and nextjs
-
-Releasing the first version of react secure local storage, which supports `setItem`, `getItem`, `removeItem` and `clear` functions 
-
-## How do I test this library on my local system & How do I contribute ?
-
-For local testing the library make sure you are installing the `react-scripts` by using `npm i react-scripts` or `yarn add react-scripts`. 
-The react-scripts is removed due to vulnerability issue which is highlighted in here : https://github.com/sushinpv/react-secure-storage/issues/3
-
-To contribute on the library, make sure you are creating a development branch for your fix as `dev/{feature/fix}` and create a PR to master branch.
-
-Before creating the PR, Please make sure to remove the `react-scripts` from the `package.json`. and you are creating a production build for the library by running `yarn build:lib`
+Before creating the PR, please remove `react-scripts` from the `package.json` and create a production build for the library by running `yarn build:lib`.
 
 ## Star History
 
